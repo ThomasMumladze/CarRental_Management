@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CarRental_Management.Entities
 {
-    internal class Customer
+    public class Customer
     {
         [Required]
         [Key]

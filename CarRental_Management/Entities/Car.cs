@@ -7,7 +7,7 @@ using System.Text;
 
 namespace CarRental_Management.Entities
 {
-    internal class Car
+    public class Car
     {
         [Key]
         public int Id { get; set; }

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CarRental_Management.Entities
 {
-    internal class Rental
+    public class Rental
     {
         [Key]
         public int Id { get; set; }
