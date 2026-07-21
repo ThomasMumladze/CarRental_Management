@@ -30,7 +30,7 @@ namespace CarRental_Management
 
                 ShowMenu();
 
-                string input = Console.ReadLine();
+                string input = Console.ReadLine() ?? "";
 
                 if (!int.TryParse(input, out int choise) || !Enum.IsDefined(typeof(MenuOption), choise))
                 {
