@@ -37,6 +37,8 @@ namespace CarRental_Management.Entities
         [Required]
         public DateTime BirthDate { get; set; }
 
+        public List<Rental> Rentals { get; set; } = new List<Rental>();
+
         public bool IsDrivingLicenseValid()
         {
             return DrivingLicenseExpiration.Date >= DateTime.Today;

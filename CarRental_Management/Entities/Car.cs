@@ -45,7 +45,7 @@ namespace CarRental_Management.Entities
         [Required]
         public bool IsAvailable { get; set; }
 
-        public ICollection<Rental> Rentals { get; set; } = new List<Rental>();
+        public List<Rental> Rentals { get; set; } = new List<Rental>();
 
 
         public int GetCarAge()
