@@ -6,42 +6,29 @@ namespace CarRental_Management.Entities
 {
     public class Rental
     {
-        [Key]
         public int Id { get; set; }
-
-        [Required]
-        [ForeignKey(nameof(Car))]
         public int CarId { get; set; }
 
         public Car Car { get; set; } = new Car();
 
-        [Required]
-        [ForeignKey(nameof(Customer))]
         public int CustomerId { get; set; }
 
         public Customer Customer { get; set; } = new Customer();
 
-        [Required]
         public DateTime StartDate { get; set; }
 
-        [Required]
         public DateTime EndDate { get; set; }
 
         public DateTime? ActualReturnDate { get; set; }
 
-        [Required]
-        [Column(TypeName = "decimal(18,2)")]
         public decimal TotalPrice { get; set; }
 
-        [Required]
         public RentalStatus Status { get; set; }
 
-        
         public bool IsPeriodValid()
         {
             return EndDate > StartDate;
         }
-
 
         public int GetRentalDurationInDays()
         {
