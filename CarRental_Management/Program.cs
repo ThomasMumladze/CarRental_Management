@@ -5,7 +5,6 @@ namespace CarRental_Management
 {
     class Program
     {
-        public static MenuOption _menuOptions;
         public static MenuOption _menuOption;
         public static void Main(string[] args)
         {
@@ -98,7 +97,5 @@ namespace CarRental_Management
             Console.ReadLine();
             return true;
         }
-
-
     }
 }
