@@ -118,6 +118,19 @@ namespace CarRental_Management.Services
                 return (true, "მომხმარებელი წარმატებით წაიშალა.");
             }
 
+            // --- search ---
+            public Customer SearchByPersonalNumber(string personalNumber)
+            {
+                return _customerRepository.GetAll()
+                    .FirstOrDefault(c => c.PersonalNumber == personalNumber) ?? throw new Exception("Failed To load Customer");
+            }
+
+            public Customer SearchByPhoneNumber(string phoneNumber)
+            {
+                return _customerRepository.GetAll()
+                    .FirstOrDefault(c => c.PhoneNumber == phoneNumber) ?? throw new Exception("Failed To load Customer"); ;
+            }
+
 
         private int CalculateAge(DateTime birthDate)
         {
