@@ -130,14 +130,20 @@ namespace CarRental_Management.Services
                 return _customerRepository.GetAll()
                     .FirstOrDefault(c => c.PhoneNumber == phoneNumber) ?? throw new Exception("Failed To load Customer"); ;
             }
+            
+            // checks Valide Driving Licence
+            public bool HasValidDrivingLicense(Customer customer)
+            {
+                return customer.DrivingLicenseExpiration.Date >= DateTime.Today;
+            }
 
 
-        private int CalculateAge(DateTime birthDate)
-        {
-            var today = DateTime.Today;
-            var age = today.Year - birthDate.Year;
-            if (birthDate.Date > today.AddYears(-age)) age--;
-            return age;
-        }
+            private int CalculateAge(DateTime birthDate)
+            {
+                var today = DateTime.Today;
+                var age = today.Year - birthDate.Year;
+                if (birthDate.Date > today.AddYears(-age)) age--;
+                return age;
+            }
     }
 }
