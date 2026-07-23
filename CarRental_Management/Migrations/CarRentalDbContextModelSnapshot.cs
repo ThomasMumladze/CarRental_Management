@@ -33,8 +33,7 @@ namespace CarRental_Management.Migrations
 
                     b.Property<string>("Brand")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Category")
                         .HasColumnType("int");
@@ -50,13 +49,11 @@ namespace CarRental_Management.Migrations
 
                     b.Property<string>("LicensePlate")
                         .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Model")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Transmission")
                         .HasColumnType("int");
@@ -65,6 +62,9 @@ namespace CarRental_Management.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("LicensePlate")
+                        .IsUnique();
 
                     b.ToTable("Cars", "car_rental");
                 });
@@ -80,36 +80,36 @@ namespace CarRental_Management.Migrations
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("DrivingLicenseCategories")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("DrivingLicenseExpiration")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DrivingLicenseNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PersonalNumber")
                         .IsRequired()
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DrivingLicenseNumber")
+                        .IsUnique();
+
+                    b.HasIndex("PersonalNumber")
+                        .IsUnique();
 
                     b.ToTable("Customers", "car_rental");
                 });
@@ -157,13 +157,13 @@ namespace CarRental_Management.Migrations
                     b.HasOne("CarRental_Management.Entities.Car", "Car")
                         .WithMany("Rentals")
                         .HasForeignKey("CarId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("CarRental_Management.Entities.Customer", "Customer")
                         .WithMany("Rentals")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Car");
