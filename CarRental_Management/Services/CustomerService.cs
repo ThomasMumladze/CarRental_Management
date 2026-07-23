@@ -73,6 +73,51 @@ namespace CarRental_Management.Services
                 return (true, "მომხმარებელი წარმატებით დაემატა.");
             }
 
+            // --- Edit ---
+            public (bool Success, string Message) UpdateCustomer(
+                int id, string firstName, string lastName,
+                string phoneNumber, DateTime drivingLicenseExpiration)
+            {
+                var customer = _customerRepository.GetById(id);
+                if (customer == null)
+                    return (false, "მომხმარებელი ვერ მოიძებნა.");
+
+                if (string.IsNullOrWhiteSpace(firstName))
+                    return (false, "სახელი არ უნდა იყოს ცარიელი.");
+
+                if (string.IsNullOrWhiteSpace(lastName))
+                    return (false, "გვარი არ უნდა იყოს ცარიელი.");
+
+                customer.FirstName = firstName;
+                customer.LastName = lastName;
+                customer.PhoneNumber = phoneNumber;
+                customer.DrivingLicenseExpiration = drivingLicenseExpiration;
+
+                _customerRepository.Update(customer);
+                _customerRepository.Save();
+
+                return (true, "მომხმარებელი წარმატებით განახლდა.");
+            }
+
+            // --- Delete ---
+            public (bool Success, string Message) DeleteCustomer(int id)
+            {
+                var customer = _customerRepository.GetById(id);
+                if (customer == null)
+                    return (false, "მომხმარებელი ვერ მოიძებნა.");
+
+                bool hasActiveRental = _rentalRepository.GetAll()
+                    .Any(r => r.CustomerId == id && r.Status == Enums.RentalStatus.Active);
+
+                if (hasActiveRental)
+                    return (false, "მომხმარებლის წაშლა შეუძლებელია — მას აქვს აქტიური გაქირავება.");
+
+                _customerRepository.Delete(id);
+                _customerRepository.Save();
+
+                return (true, "მომხმარებელი წარმატებით წაიშალა.");
+            }
+
 
         private int CalculateAge(DateTime birthDate)
         {
