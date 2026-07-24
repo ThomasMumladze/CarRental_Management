@@ -1,7 +1,8 @@
 ﻿using CarRental_Management.Enums;
+using CarRental_Management.helper;
 using CarRental_Management.Services;
 
-namespace CarRental_Management.helper
+namespace CarRental_Management.Menu
 {
     public class CustomerMenu
     {
@@ -90,39 +91,45 @@ namespace CarRental_Management.helper
 
         private void AddCustomer()
         {
-            Console.Write("სახელი: ");
-            string firstName = Console.ReadLine();
+            Console.WriteLine("(ნებისმიერ ეტაპზე -1 შეიყვანეთ გასაუქმებლად)\n");
 
-            Console.Write("გვარი: ");
-            string lastName = Console.ReadLine();
+            string firstName = ReadNonEmptyString("სახელი: ");
+            if (firstName == null) return;
 
-            Console.Write("პირადი ნომერი: ");
-            string personalNumber = Console.ReadLine();
+            string lastName = ReadNonEmptyString("გვარი: ");
+            if (lastName == null) return;
 
-            Console.Write("ტელეფონის ნომერი: ");
-            string phone = Console.ReadLine();
+            string personalNumber = ReadNonEmptyString("პირადი ნომერი: ");
+            if (personalNumber == null) return;
 
-            Console.Write("მართვის მოწმობის ნომერი: ");
-            string licenseNumber = Console.ReadLine();
+            string phone = ReadNonEmptyString("ტელეფონის ნომერი: ");
+            if (phone == null) return;
 
-            Console.Write("მართვის მოწმობის მოქმედების ვადა (yyyy-MM-dd): ");
-            if (!DateTime.TryParse(Console.ReadLine(), out DateTime licenseExpiration))
-            {
-                Console.WriteLine("არასწორი თარიღი.");
-                return;
-            }
+            string licenseNumber = ReadNonEmptyString("მართვის მოწმობის ნომერი: ");
+            if (licenseNumber == null) return;
 
-            Console.Write("დაბადების თარიღი (yyyy-MM-dd): ");
-            if (!DateTime.TryParse(Console.ReadLine(), out DateTime birthDate))
-            {
-                Console.WriteLine("არასწორი თარიღი.");
-                return;
-            }
+            DateTime? licenseExpiration = ReadDate("მართვის მოწმობის მოქმედების ვადა (yyyy-MM-dd): ");
+            if (licenseExpiration == null) return;
+
+            DateTime? birthDate = ReadDate("დაბადების თარიღი (yyyy-MM-dd): ");
+            if (birthDate == null) return;
 
             var (success, message) = _customerService.AddCustomer(
-                firstName, lastName, personalNumber, phone, licenseNumber, licenseExpiration, birthDate);
+                firstName, lastName, personalNumber, phone, licenseNumber,
+                licenseExpiration.Value, birthDate.Value);
 
             Console.WriteLine(message);
+
+            // თუ Service-ის ვალიდაციამ ვერ გაატარა (მაგ. დუბლირებული პირადი ნომერი),
+            // საშუალებას ვაძლევთ ხელახლა სცადოს, ან გავიდეს
+            if (!success)
+            {
+                Console.Write("გსურთ ხელახლა ცდა? Y/N: ");
+                if (Console.ReadLine()?.Trim().ToUpper() == "Y")
+                {
+                    AddCustomer();
+                }
+            }
         }
 
         private void ViewCustomerDetails()
@@ -240,6 +247,40 @@ namespace CarRental_Management.helper
                 Console.WriteLine($"ავტომობილი: {r.Car.Brand} {r.Car.Model}");
                 Console.WriteLine($"დაწყება: {r.StartDate:yyyy-MM-dd} | დასრულება: {r.EndDate:yyyy-MM-dd}");
                 Console.WriteLine($"ფასი: {r.TotalPrice} GEL | სტატუსი: {r.Status}");
+            }
+        }
+
+        private string ReadNonEmptyString(string prompt)
+        {
+            while (true)
+            {
+                Console.Write(prompt);
+                string input = Console.ReadLine();
+
+                if (input?.Trim() == "-1")
+                    return null; // გაუქმება
+
+                if (!string.IsNullOrWhiteSpace(input))
+                    return input.Trim();
+
+                Console.WriteLine("ველი არ შეიძლება იყოს ცარიელი. სცადეთ ხელახლა (ან -1 გასაუქმებლად).");
+            }
+        }
+
+        private DateTime? ReadDate(string prompt)
+        {
+            while (true)
+            {
+                Console.Write(prompt);
+                string input = Console.ReadLine();
+
+                if (input?.Trim() == "-1")
+                    return null; // გაუქმება
+
+                if (DateTime.TryParse(input, out DateTime result))
+                    return result;
+
+                Console.WriteLine("არასწორი თარიღის ფორმატი. მაგალითი: 2026-07-24 (ან -1 გასაუქმებლად).");
             }
         }
     }

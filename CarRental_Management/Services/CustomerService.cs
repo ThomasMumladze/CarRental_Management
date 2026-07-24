@@ -43,6 +43,9 @@ namespace CarRental_Management.Services
                 if (drivingLicenseExpiration.Date < DateTime.Today)
                     return (false, "მართვის მოწმობა ვადაგასულია — ასეთი მომხმარებელი ვერ დარეგისტრირდება.");
 
+                if (personalNumber.Length != 11)
+                    return (false, "პირადი ნომერი უნდა შეიცავდეს 11 სიმბოლოს");
+
                 bool personalNumberExists = _customerRepository.GetAll()
                     .Any(c => c.PersonalNumber == personalNumber);
                 if (personalNumberExists)

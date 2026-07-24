@@ -1,7 +1,7 @@
 ﻿using CarRental_Management.Services;
 
 
-namespace CarRental_Management.helper
+namespace CarRental_Management.Menu
 {
     public class RentalMenu
     {

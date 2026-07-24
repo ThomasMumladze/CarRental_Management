@@ -1,10 +1,11 @@
 ﻿using CarRental_Management.Enums;
+using CarRental_Management.helper;
 using CarRental_Management.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace CarRental_Management.helper
+namespace CarRental_Management.Menu
 {
     public class CarMenu
     {
