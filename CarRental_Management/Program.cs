@@ -1,101 +1,119 @@
-﻿using CarRental_Management.Enums;
+﻿using CarRental_Management.Data;
+using CarRental_Management.Enums;
+using CarRental_Management.helper;
+using CarRental_Management.Repositories;
+using CarRental_Management.Services;
 using System.Text;
 
 namespace CarRental_Management
 {
     class Program
     {
-        public static MenuOption _menuOption;
+        private CarRentalDbContext _context;
+        private CarService _carService;
+        private CustomerService _customerService;
+        private RentalServices _rentalService;
+
+        private CarMenu _carMenu;
+
         public static void Main(string[] args)
         {
-            // Helps Read Georgian Alphabet
             Console.OutputEncoding = Encoding.UTF8;
             Console.InputEncoding = Encoding.UTF8;
 
             var app = new Program();
-
+            app.Initialize();
             app.Run();
+        }
+
+        private void Initialize()
+        {
+            _context = new CarRentalDbContext();
+
+            var carRepository = new CarRepository(_context);
+            var customerRepository = new CustomerRepository(_context);
+            var rentalRepository = new RentalRepository(_context);
+
+            _carService = new CarService(carRepository);
+            _customerService = new CustomerService(customerRepository, rentalRepository);
+            _rentalService = new RentalServices(rentalRepository, carRepository, customerRepository);
+
+            _carMenu = new CarMenu(_carService);
         }
 
         private void Run()
         {
-            bool isRuning = true;
+            bool isRunning = true;
 
-            while (isRuning)
+            while (isRunning)
             {
-                Console.Clear();
-                Console.WriteLine("====================================");
+                Console.WriteLine("\n====================================");
                 Console.WriteLine("       CAR RENTAL MANAGEMENT");
                 Console.WriteLine("====================================\n");
 
-                ShowMenu();
-
-                string input = Console.ReadLine() ?? "";
-
-                if (!int.TryParse(input, out int choise) || !Enum.IsDefined(typeof(MenuOption), choise))
+                foreach (MenuOption option in Enum.GetValues(typeof(MenuOption)))
                 {
-                    Console.WriteLine("\nარასწორი მონაცემი! დააჭირეთ Enter-ს გასაგრძელებლად...");
-                    Console.ReadLine();
+                    Console.WriteLine($"{(int)option}. {option.GetDescription()}");
+                }
+                Console.Write("\nაირჩიეთ მოქმედება: ");
+
+                string input = Console.ReadLine();
+
+                if (!int.TryParse(input, out int choice) || !Enum.IsDefined(typeof(MenuOption), choice))
+                {
+                    Console.WriteLine("არასწორი მონაცემი! სცადეთ ხელახლა.");
                     continue;
                 }
 
-                _menuOption = (MenuOption)choise;
-                isRuning = HandleSelection();
-            }
-        }
+                try
+                {
+                    switch ((MenuOption)choice)
+                    {
+                        case MenuOption.ManageCars:
+                            _carMenu.Show();
+                            break;
 
-        //showing Menu Options
-        private void ShowMenu()
-        {
-            foreach (MenuOption menuOption in Enum.GetValues(typeof(MenuOption))) {
-                Console.WriteLine($"{(int)menuOption}. {menuOption.GetDescription()}");
-            }
-        }
+                        case MenuOption.ManageCustomers:
+                            Console.WriteLine("→ მომხმარებლების მართვა (მალე დაემატება)");
+                            break;
 
-        private bool HandleSelection()
-        {
-            switch (_menuOption)
-            {
-                case MenuOption.ManageCars:
-                    Console.WriteLine("\n→ ავტომობილების მართვის მენიუ");
-                    break;
+                        case MenuOption.RentCar:
+                            Console.WriteLine("→ ავტომობილის გაქირავება (მალე დაემატება)");
+                            break;
 
-                case MenuOption.ManageCustomers:
-                    Console.WriteLine("\n→ მომხმარებლების მართვის მენიუ");
-                    break;
+                        case MenuOption.ReturnCar:
+                            Console.WriteLine("→ ავტომობილის დაბრუნება (მალე დაემატება)");
+                            break;
 
-                case MenuOption.RentCar:
-                    Console.WriteLine("\n→ ავტომობილის გაქირავება");
-                    break;
+                        case MenuOption.ViewActiveRentals:
+                            Console.WriteLine("→ აქტიური გაქირავებები (მალე დაემატება)");
+                            break;
 
-                case MenuOption.ReturnCar:
-                    Console.WriteLine("\n→ ავტომობილის დაბრუნება");
-                    break;
+                        case MenuOption.RentalHistory:
+                            Console.WriteLine("→ გაქირავებების ისტორია (მალე დაემატება)");
+                            break;
 
-                case MenuOption.ViewActiveRentals:
-                    Console.WriteLine("\n→ აქტიური გაქირავებები");
-                    break;
+                        case MenuOption.SearchAndFilter:
+                            Console.WriteLine("→ ძებნა და ფილტრაცია (მალე დაემატება)");
+                            break;
 
-                case MenuOption.RentalHistory:
-                    Console.WriteLine("\n→ გაქირავებების ისტორია");
-                    break;
+                        case MenuOption.Statistics:
+                            Console.WriteLine("→ სტატისტიკა (მალე დაემატება)");
+                            break;
 
-                case MenuOption.SearchAndFilter:
-                    Console.WriteLine("\n→ ძებნა და ფილტრაცია");
-                    break;
-
-                case MenuOption.Statistics:
-                    Console.WriteLine("\n→ სტატისტიკა");
-                    break;
-
-                case MenuOption.ExitProgram:
-                    Console.WriteLine("\nპროგრამა დასრულდა.");
-                    return false;
+                        case MenuOption.ExitProgram:
+                            isRunning = false;
+                            Console.WriteLine("პროგრამა დასრულდა.");
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"ოპერაცია ვერ შესრულდა: {ex.Message}");
+                }
             }
 
-            Console.WriteLine("\nდააჭირეთ Enter-ს გასაგრძელებლად...");
-            Console.ReadLine();
-            return true;
+            _context.Dispose();
         }
     }
 }
