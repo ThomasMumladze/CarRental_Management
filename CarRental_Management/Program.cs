@@ -10,11 +10,12 @@ namespace CarRental_Management
     class Program
     {
         private CarRentalDbContext _context;
-        private CarService _carService;
-        private CustomerService _customerService;
-        private RentalServices _rentalService;
 
         private CarMenu _carMenu;
+        private CustomerMenu _customerMenu;
+        private RentalMenu _rentalMenu;
+        private SearchMenu _searchMenu;
+        private StatisticsMenu _statisticsMenu;
 
         public static void Main(string[] args)
         {
@@ -34,11 +35,16 @@ namespace CarRental_Management
             var customerRepository = new CustomerRepository(_context);
             var rentalRepository = new RentalRepository(_context);
 
-            _carService = new CarService(carRepository);
-            _customerService = new CustomerService(customerRepository, rentalRepository);
-            _rentalService = new RentalServices(rentalRepository, carRepository, customerRepository);
+            var carService = new CarService(carRepository);
+            var customerService = new CustomerService(customerRepository, rentalRepository);
+            var rentalService = new RentalServices(rentalRepository, carRepository, customerRepository);
+            var statisticsService = new StatisticsService(carRepository, customerRepository, rentalRepository);
 
-            _carMenu = new CarMenu(_carService);
+            _carMenu = new CarMenu(carService);
+            _customerMenu = new CustomerMenu(customerService, rentalService);
+            _rentalMenu = new RentalMenu(rentalService, carService, customerService);
+            _searchMenu = new SearchMenu(carService, customerService);
+            _statisticsMenu = new StatisticsMenu(statisticsService);
         }
 
         private void Run()
@@ -74,31 +80,31 @@ namespace CarRental_Management
                             break;
 
                         case MenuOption.ManageCustomers:
-                            Console.WriteLine("→ მომხმარებლების მართვა (მალე დაემატება)");
+                            _customerMenu.Show();
                             break;
 
                         case MenuOption.RentCar:
-                            Console.WriteLine("→ ავტომობილის გაქირავება (მალე დაემატება)");
+                            _rentalMenu.RentCarFlow();
                             break;
 
                         case MenuOption.ReturnCar:
-                            Console.WriteLine("→ ავტომობილის დაბრუნება (მალე დაემატება)");
+                            _rentalMenu.ReturnCarFlow();
                             break;
 
                         case MenuOption.ViewActiveRentals:
-                            Console.WriteLine("→ აქტიური გაქირავებები (მალე დაემატება)");
+                            _rentalMenu.ViewActiveRentals();
                             break;
 
                         case MenuOption.RentalHistory:
-                            Console.WriteLine("→ გაქირავებების ისტორია (მალე დაემატება)");
+                            _rentalMenu.ViewRentalHistory();
                             break;
 
                         case MenuOption.SearchAndFilter:
-                            Console.WriteLine("→ ძებნა და ფილტრაცია (მალე დაემატება)");
+                            _searchMenu.Show();
                             break;
 
                         case MenuOption.Statistics:
-                            Console.WriteLine("→ სტატისტიკა (მალე დაემატება)");
+                            _statisticsMenu.Show();
                             break;
 
                         case MenuOption.ExitProgram:
@@ -116,4 +122,5 @@ namespace CarRental_Management
             _context.Dispose();
         }
     }
+}
 }
