@@ -103,12 +103,12 @@ namespace CarRental_Management.Menu
             string phone = ReadNonEmptyString.ReadEmptyString("ტელეფონის ნომერი: ");
             if (phone == null) return;
 
-            string licenseNumber = ReadNonEmptyString.ReadEmptyString("მართვის მოწმობის ნომერი: ");
-            if (licenseNumber == null) return;
 
             string personalNumber = PersonalNumber.ReadPersonalNumber("პირადი ნომერი (11 ციფრი): ");
             if (personalNumber == null) return;
 
+            string licenseNumber = ReadNonEmptyString.ReadEmptyString("მართვის მოწმობის კატეგორია: ");
+            if (licenseNumber == null) return;
 
             DateTime? licenseExpiration = DateReader.ReadDate("მართვის მოწმობის მოქმედების ვადა (yyyy-MM-dd): ");
             if (licenseExpiration == null) return;
