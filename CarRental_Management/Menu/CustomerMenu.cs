@@ -1,6 +1,7 @@
 ﻿using CarRental_Management.Enums;
 using CarRental_Management.helper;
 using CarRental_Management.Services;
+using CarRental_Management.helper;
 
 namespace CarRental_Management.Menu
 {
@@ -93,25 +94,26 @@ namespace CarRental_Management.Menu
         {
             Console.WriteLine("(ნებისმიერ ეტაპზე -1 შეიყვანეთ გასაუქმებლად)\n");
 
-            string firstName = ReadNonEmptyString("სახელი: ");
+            string firstName = ReadNonEmptyString.ReadEmptyString("სახელი: ");
             if (firstName == null) return;
 
-            string lastName = ReadNonEmptyString("გვარი: ");
+            string lastName = ReadNonEmptyString.ReadEmptyString("გვარი: ");
             if (lastName == null) return;
 
-            string personalNumber = ReadNonEmptyString("პირადი ნომერი: ");
-            if (personalNumber == null) return;
-
-            string phone = ReadNonEmptyString("ტელეფონის ნომერი: ");
+            string phone = ReadNonEmptyString.ReadEmptyString("ტელეფონის ნომერი: ");
             if (phone == null) return;
 
-            string licenseNumber = ReadNonEmptyString("მართვის მოწმობის ნომერი: ");
+            string licenseNumber = ReadNonEmptyString.ReadEmptyString("მართვის მოწმობის ნომერი: ");
             if (licenseNumber == null) return;
 
-            DateTime? licenseExpiration = ReadDate("მართვის მოწმობის მოქმედების ვადა (yyyy-MM-dd): ");
+            string personalNumber = PersonalNumber.ReadPersonalNumber("პირადი ნომერი (11 ციფრი): ");
+            if (personalNumber == null) return;
+
+
+            DateTime? licenseExpiration = DateReader.ReadDate("მართვის მოწმობის მოქმედების ვადა (yyyy-MM-dd): ");
             if (licenseExpiration == null) return;
 
-            DateTime? birthDate = ReadDate("დაბადების თარიღი (yyyy-MM-dd): ");
+            DateTime? birthDate = DateReader.ReadDate("დაბადების თარიღი (yyyy-MM-dd): ");
             if (birthDate == null) return;
 
             var (success, message) = _customerService.AddCustomer(
@@ -120,8 +122,6 @@ namespace CarRental_Management.Menu
 
             Console.WriteLine(message);
 
-            // თუ Service-ის ვალიდაციამ ვერ გაატარა (მაგ. დუბლირებული პირადი ნომერი),
-            // საშუალებას ვაძლევთ ხელახლა სცადოს, ან გავიდეს
             if (!success)
             {
                 Console.Write("გსურთ ხელახლა ცდა? Y/N: ");
@@ -129,6 +129,7 @@ namespace CarRental_Management.Menu
                 {
                     AddCustomer();
                 }
+                //}
             }
         }
 
@@ -247,40 +248,6 @@ namespace CarRental_Management.Menu
                 Console.WriteLine($"ავტომობილი: {r.Car.Brand} {r.Car.Model}");
                 Console.WriteLine($"დაწყება: {r.StartDate:yyyy-MM-dd} | დასრულება: {r.EndDate:yyyy-MM-dd}");
                 Console.WriteLine($"ფასი: {r.TotalPrice} GEL | სტატუსი: {r.Status}");
-            }
-        }
-
-        private string ReadNonEmptyString(string prompt)
-        {
-            while (true)
-            {
-                Console.Write(prompt);
-                string input = Console.ReadLine();
-
-                if (input?.Trim() == "-1")
-                    return null; // გაუქმება
-
-                if (!string.IsNullOrWhiteSpace(input))
-                    return input.Trim();
-
-                Console.WriteLine("ველი არ შეიძლება იყოს ცარიელი. სცადეთ ხელახლა (ან -1 გასაუქმებლად).");
-            }
-        }
-
-        private DateTime? ReadDate(string prompt)
-        {
-            while (true)
-            {
-                Console.Write(prompt);
-                string input = Console.ReadLine();
-
-                if (input?.Trim() == "-1")
-                    return null; // გაუქმება
-
-                if (DateTime.TryParse(input, out DateTime result))
-                    return result;
-
-                Console.WriteLine("არასწორი თარიღის ფორმატი. მაგალითი: 2026-07-24 (ან -1 გასაუქმებლად).");
             }
         }
     }

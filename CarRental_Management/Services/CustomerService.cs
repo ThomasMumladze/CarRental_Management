@@ -43,10 +43,14 @@ namespace CarRental_Management.Services
                 if (drivingLicenseExpiration.Date < DateTime.Today)
                     return (false, "მართვის მოწმობა ვადაგასულია — ასეთი მომხმარებელი ვერ დარეგისტრირდება.");
 
-                if (personalNumber.Length != 11)
-                    return (false, "პირადი ნომერი უნდა შეიცავდეს 11 სიმბოლოს");
+            if (string.IsNullOrWhiteSpace(personalNumber) ||
+                   personalNumber.Length != 11 ||
+                   !personalNumber.All(char.IsDigit))
+                        {
+                            return (false, "პირადი ნომერი უნდა შედგებოდეს  11 ციფრისგან.");
+                        }
 
-                bool personalNumberExists = _customerRepository.GetAll()
+            bool personalNumberExists = _customerRepository.GetAll()
                     .Any(c => c.PersonalNumber == personalNumber);
                 if (personalNumberExists)
                     return (false, "ამ პირადი ნომრით მომხმარებელი უკვე არსებობს.");
