@@ -7,7 +7,7 @@ using System.Text;
 
 namespace CarRental_Management.Services
 {
-    internal class CarService
+    public class CarService
     {
         private readonly ICarRepository _carRepository;
 

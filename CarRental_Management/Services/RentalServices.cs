@@ -4,7 +4,7 @@ using CarRental_Management.Repositories;
 
 namespace CarRental_Management.Services
 {
-    internal class RentalServices
+    public class RentalServices
     {
         private readonly IRentalRepository _rentalRepository;
         private readonly ICarRepository _carRepository;

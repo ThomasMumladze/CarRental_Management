@@ -7,7 +7,7 @@ using System.Text;
 
 namespace CarRental_Management.Repositories
 {
-    internal class RentalRepository : IRentalRepository
+    public class RentalRepository : IRentalRepository
     {
         private readonly CarRentalDbContext _context;
 

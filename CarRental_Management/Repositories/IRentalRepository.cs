@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CarRental_Management.Repositories
 {
-    internal interface IRentalRepository
+    public interface IRentalRepository
     {
         List<Rental> GetAll();
         Rental GetById(int id);
